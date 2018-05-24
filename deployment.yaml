@@ -87,7 +87,7 @@ spec:
         image: azcontregxpto.azurecr.io/gomvc:$BUILD_NUMBER
         env:
         - name: DB_HOST
-          value: pg-db.backend.svc.cluster.local:5432
+          value: "pg-db.backend.svc.cluster.local:5432"
         ports:
         - containerPort: 8080
       imagePullSecrets:
