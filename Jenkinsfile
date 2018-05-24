@@ -7,6 +7,9 @@
 //    * KUBE_SERVICE: Azure Kubernetes service name
 //    * KUBE_CREDS: SSH Credentials for Kubernetes Master
 //    * KUBE_SECRET: Kubernetes secret to access the Azure Container Registry
+//    * POSTGRES_ACC: Postgres account credentials
+//    * DB_DIR: directory where the postgres DB will live
+//    * DB_NAME: name of the postgres DB
 //
 pipeline {
   agent any
