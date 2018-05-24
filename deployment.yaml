@@ -45,9 +45,9 @@ spec:
         name: postgres
         env:
         - name: POSTGRES_PASSWORD
-          value: $POSTGRES_PASSWORD
+          value: $POSTGRES_ACC_PSW
         - name: POSTGRES_USER
-          value: $POSTGRES_USER
+          value: $POSTGRES_ACC_USR
         - name: PGDATA
           value: $DB_DIR
         - name: POSTGRES_DB
