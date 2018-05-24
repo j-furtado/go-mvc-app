@@ -14,11 +14,6 @@
 pipeline {
   agent any
 
-  parameters {
-    string(defaultValue: true, description: '', name: 'DB_DIR')
-    string(defaultValue: true, description: '', name: 'DB_NAME')
-  }
-
   environment {
     // Sets the variables to be used in Kubernetes
     POSTGRES_ACC = credentials("${params.PG_ACC}")
