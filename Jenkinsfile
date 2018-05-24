@@ -20,6 +20,7 @@ pipeline {
     // will create a POSTGRES_ACC_USR and POSTGRES_ACC_PSW
     DB_DIR = "${params.PG_DIR}"
     DB_NAME = "${params.PG_BD}"
+    MOUNT_PATH = "${params.MOUNT_DIR}"
   }
   stages{
     stage('Clone Repo'){

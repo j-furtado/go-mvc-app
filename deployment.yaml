@@ -58,7 +58,7 @@ spec:
           name: postgres
         volumeMounts:
         - name: postgres-persistent-storage
-          mountPath: $DB_DIR
+          mountPath: $MOUNT_PATH
       imagePullSecrets:
       - name: $KUBERNETES_SECRET_NAME
       volumes:
