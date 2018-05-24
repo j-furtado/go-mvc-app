@@ -21,12 +21,16 @@ pipeline {
       steps{
         // Builds the container image
         sh 'docker pull golang:latest'
+        sh 'docker pull postgres:latest'
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.ACR_CREDS}",
           usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
             sh "docker login -u $USERNAME -p $PASSWORD https://${params.ACR_LOGINSERVER}"
             sh "docker tag golang:latest ${params.ACR_LOGINSERVER}/golang:latest"
+            sh "docker tag postgres:latest ${params.ACR_LOGINSERVER}/postgres:latest"
             sh "docker push ${params.ACR_LOGINSERVER}/golang:latest"
-            sh "docker build -f 'Dockerfile' -t ${params.ACR_LOGINSERVER}/gomvc:$BUILD_NUMBER ."
+            sh "docker push ${params.ACR_LOGINSERVER}/postgres:latest"
+            sh "docker build -f 'Dockerfile-db' -t ${params.ACR_LOGINSERVER}/postgres:$BUILD_NUMBER ."
+            sh "docker build -f 'Dockerfile-app' -t ${params.ACR_LOGINSERVER}/gomvc:$BUILD_NUMBER ."
         }
       }
     }
@@ -36,6 +40,7 @@ pipeline {
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.ACR_CREDS}",
           usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
           sh "docker login -u $USERNAME -p $PASSWORD https://${params.ACR_LOGINSERVER}"
+          sh "docker push ${params.ACR_LOGINSERVER}/postgres:$BUILD_NUMBER"
           sh "docker push ${params.ACR_LOGINSERVER}/gomvc:$BUILD_NUMBER"
         }
       }

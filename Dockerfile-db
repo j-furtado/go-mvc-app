@@ -1,0 +1,17 @@
+FROM azcontregxpto.azurecr.io/postgres:latest
+
+# Environment variables
+# Check the deployment.yaml for the env variables
+#ENV POSTGRES_PASSWORD=password123
+#ENV POSTGRES_USER=post_master
+#ENV PGDATA=/var/lib/postgresql/data/pgdata
+#ENV POSTGRES_DB=sampledb
+
+# Open database port
+EXPOSE 5432
+
+# Health check to see if the database is ready
+HEALTHCHECK --interval=30s \
+            --timeout=30s \
+            --retries=3 \
+            CMD pg_isready -d $POSTGRES_DB -h localhost -p 5432 -q -U $POSTGRES_USER
