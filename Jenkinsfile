@@ -26,7 +26,7 @@ pipeline {
             sh "docker login -u $USERNAME -p $PASSWORD https://${params.ACR_LOGINSERVER}"
             sh "docker tag golang:latest ${params.ACR_LOGINSERVER}/golang:latest"
             sh "docker push ${params.ACR_LOGINSERVER}/golang:latest"
-            sh "docker build -f 'Dockerfile' -t ${params.ACR_LOGINSERVER}/samplego:$BUILD_NUMBER ."
+            sh "docker build -f 'Dockerfile' -t ${params.ACR_LOGINSERVER}/gomvc:$BUILD_NUMBER ."
         }
       }
     }
@@ -36,7 +36,7 @@ pipeline {
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.ACR_CREDS}",
           usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
           sh "docker login -u $USERNAME -p $PASSWORD https://${params.ACR_LOGINSERVER}"
-          sh "docker push ${params.ACR_LOGINSERVER}/samplego:$BUILD_NUMBER"
+          sh "docker push ${params.ACR_LOGINSERVER}/gomvc:$BUILD_NUMBER"
         }
       }
     }

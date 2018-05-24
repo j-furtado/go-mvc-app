@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: sample-go-app
+  name: go-mvc
 spec:
   replicas: 2
   strategy:
@@ -13,11 +13,11 @@ spec:
   template:
     metadata:
       labels:
-        app: sample-go-app
+        app: go-mvc
     spec:
       containers:
-      - name: samplego
-        image: azcontregxpto.azurecr.io/samplego:$BUILD_NUMBER
+      - name: gomvc
+        image: azcontregxpto.azurecr.io/gomvc:$BUILD_NUMBER
         ports:
         - containerPort: 8080
       imagePullSecrets:
@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: sample-go-app
+  name: go-mvc
 spec:
   type: LoadBalancer
   ports:
@@ -35,4 +35,4 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: sample-go-app
+    app: go-mvc
