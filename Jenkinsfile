@@ -17,8 +17,8 @@ pipeline {
     // Sets the variables to be used in Kubernetes
     POSTGRES_ACC = credentials("${params.PG_ACC}")
     // will create a POSTGRES_ACC_USR and POSTGRES_ACC_PSW
-    DB_DIR = "${params.PG_DIR}"
-    DB_NAME = "${params.PG_BD}"
+    DB_DIR = params.PG_DIR
+    DB_NAME = params.PG_BD
   }
   stages{
     stage('Clone Repo'){
