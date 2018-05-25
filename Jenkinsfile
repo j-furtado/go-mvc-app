@@ -37,7 +37,7 @@ pipeline {
       steps {
         // Builds the container image
         script {
-          if(DEPLOY_DB) {
+          if(DEPLOY_DB == true) {
             stage('Deploy new DB image') {
               sh 'docker pull postgres:latest'
               withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.ACR_CREDS}",
