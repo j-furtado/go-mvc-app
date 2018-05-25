@@ -21,7 +21,9 @@ pipeline {
     DB_DIR = "${params.PG_DIR}"
     DB_NAME = "${params.PG_BD}"
     MOUNT_PATH = "${params.MOUNT_DIR}"
+    DEPLOY_DB = "${params.DEPLOY_DB}"
   }
+
   stages{
     stage('Clone Repo'){
       steps{
@@ -29,30 +31,47 @@ pipeline {
         checkout scm
       }
     }
-    stage('Build') {
+
+    stage('Check if DB needs to deploy') {
+      steps {
+        // Builds the container image
+        script {
+          if(DEPLOY_DB) {
+            stage('Deploy new DB image') {
+              sh 'docker pull postgres:latest'
+              withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.ACR_CREDS}",
+                usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                  sh "docker login -u $USERNAME -p $PASSWORD https://${params.ACR_LOGINSERVER}"
+                  sh "docker tag postgres:latest ${params.ACR_LOGINSERVER}/postgres:latest"
+                  sh "docker push ${params.ACR_LOGINSERVER}/postgres:latest"
+                  sh "docker build -f 'Dockerfile-db' -t ${params.ACR_LOGINSERVER}/pgdb ."
+                  sh "docker push ${params.ACR_LOGINSERVER}/pgdb"
+              }
+            } // Stage close
+          } // If close
+        } // script close
+      } // steps close
+    } // stage close
+
+    stage('Build App Image') {
       steps{
         // Builds the container image
         sh 'docker pull golang:latest'
-        sh 'docker pull postgres:latest'
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.ACR_CREDS}",
           usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
             sh "docker login -u $USERNAME -p $PASSWORD https://${params.ACR_LOGINSERVER}"
             sh "docker tag golang:latest ${params.ACR_LOGINSERVER}/golang:latest"
-            sh "docker tag postgres:latest ${params.ACR_LOGINSERVER}/postgres:latest"
             sh "docker push ${params.ACR_LOGINSERVER}/golang:latest"
-            sh "docker push ${params.ACR_LOGINSERVER}/postgres:latest"
-            sh "docker build -f 'Dockerfile-db' -t ${params.ACR_LOGINSERVER}/postgres:$BUILD_NUMBER ."
             sh "docker build -f 'Dockerfile-app' -t ${params.ACR_LOGINSERVER}/gomvc:$BUILD_NUMBER ."
         }
       }
     }
-    stage('Push Image') {
+    stage('Push App Image') {
       steps{
         // Pushes the image to the registry
         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${params.ACR_CREDS}",
           usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
           sh "docker login -u $USERNAME -p $PASSWORD https://${params.ACR_LOGINSERVER}"
-          sh "docker push ${params.ACR_LOGINSERVER}/postgres:$BUILD_NUMBER"
           sh "docker push ${params.ACR_LOGINSERVER}/gomvc:$BUILD_NUMBER"
         }
       }

@@ -42,7 +42,7 @@ spec:
       hostname: pg-db
       subdomain: backend
       containers:
-      - image: azcontregxpto.azurecr.io/postgres:$BUILD_NUMBER
+      - image: azcontregxpto.azurecr.io/pgdb:latest
         name: postgres
         env:
         - name: POSTGRES_PASSWORD
