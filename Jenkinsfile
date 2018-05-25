@@ -10,6 +10,7 @@
 //    * POSTGRES_ACC: Postgres account credentials
 //    * DB_DIR: directory where the postgres DB will live
 //    * DB_NAME: name of the postgres DB
+//    * DEPLOY_DB: True or False if you want to deploy the DB image again
 //
 pipeline {
   agent any
