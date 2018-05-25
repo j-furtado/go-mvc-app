@@ -12,20 +12,8 @@ spec:
     app: postgres
   clusterIP: None
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-pv-claim
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: default
-  resources:
-    requests:
-      storage: 20Gi
----
 apiVersion: extensions/v1beta1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgres
 spec:
@@ -34,6 +22,8 @@ spec:
       app: postgres
   strategy:
     type: Recreate
+  serviceName: "postgresDB"
+  replicas: 1
   template:
     metadata:
       labels:
@@ -61,10 +51,15 @@ spec:
           mountPath: $MOUNT_PATH
       imagePullSecrets:
       - name: $KUBERNETES_SECRET_NAME
-      volumes:
-      - name: postgres-persistent-storage
-        persistentVolumeClaim:
-          claimName: postgres-pv-claim
+  volumeClaimTemplates:
+  - metadata:
+    name: postgres-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: default
+      resources:
+        requests:
+          storage: 20Gi
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
