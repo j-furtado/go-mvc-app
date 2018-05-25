@@ -12,7 +12,7 @@ spec:
     app: postgres
   clusterIP: None
 ---
-apiVersion: apps/v1
+apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: postgres
@@ -20,9 +20,6 @@ spec:
   selector:
     matchLabels:
       app: postgres
-  strategy:
-    type: Recreate
-  serviceName: "postgresDB"
   replicas: 1
   template:
     metadata:
@@ -53,7 +50,7 @@ spec:
       - name: $KUBERNETES_SECRET_NAME
   volumeClaimTemplates:
   - metadata:
-    name: postgres-persistent-storage
+      name: postgres-persistent-storage
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: default
