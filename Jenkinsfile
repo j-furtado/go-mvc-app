@@ -77,17 +77,42 @@ pipeline {
     stage('Deploy') {
       steps{
         // Deploys a container with the generated container image
-        acsDeploy(azureCredentialsId: "${params.AZ_CREDS}",
-            resourceGroupName: "${params.KUBE_RSGRP}",
-            containerService: "${params.KUBE_SERVICE} | Kubernetes",
-            sshCredentialsId: "${params.KUBE_CREDS}",
-            configFilePaths: '*.yaml',
-            enableConfigSubstitution: true,
-            secretName: "${params.KUBE_SECRET}",
-            secretNamespace: 'default',
-            containerRegistryCredentials: [
-                [credentialsId: "${params.ACR_CREDS}", url: "https://${params.ACR_LOGINSERVER}"]
-        ])
+//        acsDeploy(azureCredentialsId: "${params.AZ_CREDS}",
+//            resourceGroupName: "${params.KUBE_RSGRP}",
+//            containerService: "${params.KUBE_SERVICE} | Kubernetes",
+//            sshCredentialsId: "${params.KUBE_CREDS}",
+//            configFilePaths: '*.yaml',
+//            enableConfigSubstitution: true,
+//            secretName: "${params.KUBE_SECRET}",
+//            secretNamespace: 'default',
+//            containerRegistryCredentials: [
+//                [credentialsId: "${params.ACR_CREDS}", url: "https://${params.ACR_LOGINSERVER}"]
+//        ])
+
+
+        kubernetesDeploy(
+          configs: '*.yaml',
+          dockerCredentials: [
+            [
+              credentialsId:  "${params.ACR_CREDS}",
+              url: "https://${params.ACR_LOGINSERVER}"
+            ]
+          ],
+          kubeConfig: [
+            path: ''
+          ],
+          kubeconfigId: 'kube-config',
+          secretName: "${params.KUBE_SECRET}",
+          ssh: [
+            sshCredentialsId: '*',
+            sshServer: ''
+          ],
+          textCredentials: [
+            certificateAuthorityData: '',
+            clientCertificateData: '',
+            clientKeyData: '',
+            serverUrl: 'https://'
+          ])
       }
     }
   }
