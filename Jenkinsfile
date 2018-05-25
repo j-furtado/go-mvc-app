@@ -32,7 +32,7 @@ pipeline {
       }
     }
 
-    stage('Check if DB needs to deploy') {
+    stage('Create DB Image?') {
       when {
         expression {
           params.DEPLOY_DB == true
